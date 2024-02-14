@@ -1,6 +1,15 @@
 import asyncio
 from httpx import AsyncClient
 from .async_scraper import AsyncScraper
+from api._assist.foundation import (
+    fetch_institution_agreements,
+    fetch_agreements_categories,
+    fetch_agreements,
+    fetch_articulation_agreements,
+    get_agreements,
+    get_keys,
+    get_pdfs
+)
 
 class InstitutionFetcher(AsyncScraper):
     """
@@ -11,16 +20,6 @@ class InstitutionFetcher(AsyncScraper):
         Fetches a list of institutions from the assist.org API.
         """
         return await self.scrape_endpoint("https://assist.org/api/institutions")
-
-from api._assist.foundation import (
-    fetch_institution_agreements,
-    fetch_agreements_categories,
-    fetch_agreements,
-    fetch_articulation_agreements,
-    get_agreements,
-    get_keys,
-    get_pdfs
-)
 
 class AssistOrgAPI:
     def __init__(self, school_id, major, major_code, delay=1):
