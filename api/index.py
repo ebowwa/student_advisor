@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import uvicorn
 from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
 from api._assist.models import AgreementQuery 
-
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -65,6 +65,12 @@ async def query_agreements(query: AgreementQuery):
         return agreements
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/openapi", include_in_schema=False)
+async def custom_openapi():
+    return JSONResponse(content=app.openapi())
+
 
 # To run the server, use the following command in your terminal:
 # uvicorn app:app --reload
