@@ -69,9 +69,13 @@ async def query_agreements(query: AgreementQuery):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+
 @app.get("/api/openapi", include_in_schema=True)
-async def custom_openapi():
-    return JSONResponse(content=app.openapi())
+async def custom_openapi(request: Request):
+    openapi_schema = app.openapi()
+    server_url = str(request.base_url)[:-1]  # Remove trailing slash for consistency
+    openapi_schema["servers"] = [{"url": server_url}]
+    return JSONResponse(content=openapi_schema)
 
 
 # To run the server, use the following command in your terminal:
