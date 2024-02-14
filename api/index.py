@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
-from assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
-from assist.models import AgreementQuery 
+from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
+from api._assist.models import AgreementQuery 
 
 app = FastAPI()
 

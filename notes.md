@@ -1,3 +1,3 @@
 curl -X 'GET' \
-'http://localhost:8000/institutions' \
+'https://student-assist-advisor.vercel.app/api/institutions' \
 -H 'accept: application/json'
