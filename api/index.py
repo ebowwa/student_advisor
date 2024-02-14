@@ -1,11 +1,10 @@
-from fastapi import FastAPI, HTTPException, requests
-from fastapi.responses import JSONResponse
-from fastapi.openapi.utils import get_openapi
+xxfrom fastapi import FastAPI, HTTPException
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
 from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
 from api._assist.models import AgreementQuery 
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -69,30 +68,10 @@ async def query_agreements(query: AgreementQuery):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(
-        title="Custom title",
-        version="2.5.0",
-        description="This is a very custom OpenAPI schema",
-        routes=app.routes,
-    )
-    openapi_schema["servers"] = [{"url": "https://dynamic-server-url.com"}]  # Dynamic URL
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
 
 @app.get("/api/openapi", include_in_schema=False)
-async def custom_openapi_endpoint(request: Request):
-    server_url = str(request.base_url)  # Dynamically get the server URL from the request
-    openapi_schema = custom_openapi()  # Generate the custom OpenAPI schema
-    openapi_schema["servers"] = [{"url": server_url}]  # Update the schema with the dynamic server URL
-    return JSONResponse(content=openapi_schema)
-
-app.openapi = custom_openapi  # Override the app's openapi method with the custom one
-
-
-
+async def custom_openapi():
+    return JSONResponse(content=app.openapi())
 
 
 # To run the server, use the following command in your terminal:
