@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional  # Add this import line
+from typing import Optional 
 
 class AgreementQuery(BaseModel):
   receiving_institution_id: int

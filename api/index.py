@@ -69,18 +69,13 @@ async def query_agreements(query: AgreementQuery):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/openapi", include_in_schema=False)  # Note: include_in_schema is set to False to prevent recursion
-async def custom_openapi(request: Request):
-    # Generate OpenAPI schema
-    openapi_schema = app.openapi()
-
-    # Dynamically determine the server's URL from the request
-    server_url = str(request.base_url)[:-1]  # Remove trailing slash for consistency
-    # Update the OpenAPI schema with the server's URL
-    openapi_schema["servers"] = [{"url": server_url}]
-
-    return JSONResponse(content=openapi_schema)
+@app.get("/api/openapi", include_in_schema=False)
+async def custom_openapi():
+    return JSONResponse(content=app.openapi())
 
 
 # To run the server, use the following command in your terminal:
-# uvicorn app:app --reload
+# uvicorn app:app --reload # app.py
+# uvicorn index:app --reload # index.py
+
+
