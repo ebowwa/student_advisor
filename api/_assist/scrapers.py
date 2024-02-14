@@ -1,6 +1,6 @@
 import asyncio
 from httpx import AsyncClient
-from .async_scrapper import AsyncScrapper
+from .api._assist.async_scrapper import AsyncScrapper
 
 class InstitutionFetcher(AsyncScraper):
     """
@@ -12,63 +12,42 @@ class InstitutionFetcher(AsyncScraper):
         """
         return await self.scrape_endpoint("https://assist.org/api/institutions")
 
+from .foundation import (
+    fetch_institution_agreements,
+    fetch_agreements_categories,
+    fetch_agreements,
+    fetch_articulation_agreements,
+    get_agreements,
+    get_keys,
+    get_pdfs
+)
+
 class AssistOrgAPI:
     def __init__(self, school_id, major, major_code, delay=1):
         self.school_id = school_id
         self.major = major
         self.major_code = major_code
         self.delay = delay
-        self.scraper = AsyncScraper()
+        self.scraper = AsyncScraper()  # Ensure AsyncScraper is defined or imported appropriately
 
     async def fetch_institution_agreements(self, institution_id):
-        return await self.scraper.scrape_endpoint(f"https://assist.org/api/institutions/{institution_id}/agreements")
+        return await fetch_institution_agreements(self.scraper, institution_id)
 
     async def fetch_agreements_categories(self, receiving_institution_id, sending_institution_id, academic_year_id):
-        return await self.scraper.scrape_endpoint(f"https://assist.org/api/agreements/categories?receivingInstitutionId={receiving_institution_id}&sendingInstitutionId={sending_institution_id}&academicYearId={academic_year_id}")
+        return await fetch_agreements_categories(self.scraper, receiving_institution_id, sending_institution_id, academic_year_id)
 
     async def fetch_agreements(self, receiving_institution_id, sending_institution_id, academic_year_id, category_code):
-        return await self.scraper.scrape_endpoint(f"https://assist.org/api/agreements?receivingInstitutionId={receiving_institution_id}&sendingInstitutionId={sending_institution_id}&academicYearId={academic_year_id}&categoryCode={category_code}")
+        return await fetch_agreements(self.scraper, receiving_institution_id, sending_institution_id, academic_year_id, category_code)
 
     async def fetch_articulation_agreements(self, key):
-        return await self.scraper.scrape_endpoint(f"https://assist.org/api/articulation/Agreements?Key={key}")
+        return await fetch_articulation_agreements(self.scraper, key)
 
     async def get_agreements(self):
-        data = await self.scraper.scrape_endpoint(f'https://assist.org/api/institutions/{self.school_id}/agreements')
-        agreement_list = []
-        for agreement in data:
-            if agreement['isCommunityCollege']:
-                school_id = agreement['institutionParentId']
-                year = agreement['sendingYearIds'][-1]
-                curr = {'id': school_id, 'year': year}
-                agreement_list.append(curr)
-        return agreement_list
+        return await get_agreements(self.scraper, self.school_id, self.major)
 
     async def get_keys(self):
-        agreement_list = await self.get_agreements()
-        keys = []
-        for agreement in agreement_list:
-            await asyncio.sleep(self.delay)
-            school_id, year = agreement['id'], agreement['year']
-            data = await self.scraper.scrape_endpoint(f'https://assist.org/api/agreements?receivingInstitutionId={self.school_id}&sendingInstitutionId={school_id}&academicYearId={year}&categoryCode=major')
-            data = data['reports']
-            for report in data:
-                if report['label'] == self.major:
-                    keys.append({'key': report['key'], 'school_id': school_id})
-        return keys
+        return await get_keys(self.scraper, self.school_id, self.major, self.delay)
 
     async def get_pdfs(self):
         keys = await self.get_keys()
-        id_to_key = {}
-        for key in keys:
-            key_val = key['key']
-            school_id = key['school_id']
-            id_to_key[school_id] = key_val
-            pdf_url = f'https://assist.org/api/artifacts/{key_val}'
-            async with AsyncClient() as client:
-                response = await client.get(pdf_url)
-                if response.status_code == 200:
-                    file_name = f'agreements/report_{self.school_id}_{school_id}_{self.major_code}.pdf'
-                    with open(file_name, 'wb') as f:
-                        f.write(response.content)
-                await asyncio.sleep(self.delay)
-        return id_to_key
+        return await get_pdfs(self.scraper, self.school_id, self.major_code, keys, self.delay)

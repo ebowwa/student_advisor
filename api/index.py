@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
-from ._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
-from ._assist.models import AgreementQuery 
+from _assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
+from _assist.models import AgreementQuery 
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
@@ -79,3 +79,4 @@ async def custom_openapi():
 # uvicorn index:app --reload # index.py
 
 
+# uvicorn api:index --reload
