@@ -1,4 +1,4 @@
-xxfrom fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
@@ -69,7 +69,7 @@ async def query_agreements(query: AgreementQuery):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/openapi", include_in_schema=False)
+@app.get("/api/openapi", include_in_schema=True)
 async def custom_openapi():
     return JSONResponse(content=app.openapi())
 
