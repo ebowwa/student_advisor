@@ -4,7 +4,6 @@ from pydantic import BaseModel
 import uvicorn
 from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
 from api._assist.models import AgreementQuery 
-from fastapi.openapi.utils import get_openapi
 
 
 app = FastAPI()
@@ -66,21 +65,6 @@ async def query_agreements(query: AgreementQuery):
         return agreements
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/openapi")
-def get_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(
-        title="Custom API",
-        version="1.0.0",
-        description="This is a custom API using FastAPI",
-        routes=app.routes,
-    )
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-app.openapi = get_openapi
 
 # To run the server, use the following command in your terminal:
 # uvicorn app:app --reload
