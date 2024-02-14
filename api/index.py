@@ -67,7 +67,7 @@ async def query_agreements(query: AgreementQuery):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/openapi.json")
+@app.get("/api/openapi")
 def get_openapi():
     if app.openapi_schema:
         return app.openapi_schema
