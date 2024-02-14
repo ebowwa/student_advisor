@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+import socket
 from typing import Optional
 from pydantic import BaseModel
 import uvicorn
 from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
 from api._assist.models import AgreementQuery 
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -68,10 +69,16 @@ async def query_agreements(query: AgreementQuery):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
-
-@app.get("/api/openapi", include_in_schema=False)
+@app.get("/api/server-url", response_model=dict, include_in_schema=True)
+async def get_server_url():
+    server_url = f"http://{socket.gethostbyname(socket.gethostname())}:{app.port}"
+    return {"server_url": server_url}
+  
+@app.get("/api/openapi", include_in_schema=True)
 async def custom_openapi():
     return JSONResponse(content=app.openapi())
+
+
 
 
 # To run the server, use the following command in your terminal:
