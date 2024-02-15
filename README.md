@@ -25,5 +25,6 @@ Access it now with the following GPT:
 
 
 
-## BY: ![elijah_arbee](https://github.com/ebowwa/student_advisor/assets/81942069/2dbe0e6e-3ce2-402b-98ab-42641cc2fd5e) 
+## BY: ![elijah_arbee](https://github.com/ebowwa/student_assist_advisor/assets/81942069/031f8690-4d51-4bd7-b95d-a17174f2850f)
+
 
