@@ -6,6 +6,8 @@ class AgreementQuery(BaseModel):
   sending_institution_id: int
   academic_year_id: int
   category_code: Optional[str] = None
+  major: str
+  major_code: str
 
 class ArticulationAgreement(BaseModel):
   id: int

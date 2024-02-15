@@ -1,11 +1,14 @@
 
 from aiohttp import ClientResponseError
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
+import logging
 
 from api._assist.institution_fetch import InstitutionFetcher
 from api._assist.models import AgreementQuery, ArticulationAgreement
 from api._assist.scrapers import AssistOrgAPI, AsyncScraper
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -62,16 +65,18 @@ async def get_articulation_agreements(key: str) -> ArticulationAgreement:
 @app.post("/api/query-agreements/")
 async def query_agreements(query: AgreementQuery):
     try:
-        api = AssistOrgAPI(school_id=query.receiving_institution_id, major="", major_code="")
+        # Now using major and major_code from the query object
+        api = AssistOrgAPI(school_id=query.receiving_institution_id, major=query.major, major_code=query.major_code)
+
         if query.category_code:
             agreements = await api.fetch_agreements(query.receiving_institution_id, query.sending_institution_id, query.academic_year_id, query.category_code)
         else:
             agreements = await api.fetch_agreements_categories(query.receiving_institution_id, query.sending_institution_id, query.academic_year_id)
+
         return agreements
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Failed to fetch agreements: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching agreements")
 
 
 @app.get("/api/openapi", include_in_schema=False)
