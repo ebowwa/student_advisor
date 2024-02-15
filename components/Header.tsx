@@ -28,7 +28,7 @@ export function Header() {
 }
 
 
-function FlagIcon(props) {
+function FlagIcon(props: any) {
   return (
     <svg
       {...props}
