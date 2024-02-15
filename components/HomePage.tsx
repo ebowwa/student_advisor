@@ -1,8 +1,8 @@
 // HomePage.tsx
 
-import { HeaderSection } from "./components/HeaderSection";
-import { FeatureSection } from "./components/FeatureSection";
-import { FooterSection } from "./components/FooterSection";
+import { HeaderSection } from "@/components/HeaderSection";
+import { FeatureSection } from "@/components/FeatureSection";
+import { FooterSection } from "@/components/FooterSection";
 
 export function HomePage() {
   return (
