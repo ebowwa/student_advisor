@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 import uvicorn
 from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
-from api._assist.models import AgreementQuery 
+from api._assist.models import AgreementQuery, ArticulationAgreement 
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
@@ -45,11 +45,14 @@ async def get_agreements(receiving_institution_id: int, sending_institution_id: 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/articulation-agreements/{key}", response_model=dict)
-async def get_articulation_agreements(key: str):
+@app.get("/api/articulation-agreements/{key}", response_model=ArticulationAgreement)
+async def get_articulation_agreements(key: str) -> ArticulationAgreement:
     try:
         scraper = AsyncScraper()
-        agreement = await scraper.scrape_endpoint(f"https://assist.org/api/articulation/Agreements?Key={key}")
+        agreement_data = await scraper.scrape_endpoint(f"https://assist.org/api/articulation/Agreements?Key={key}")
+
+        # Assuming agreement_data is a dict that matches the ArticulationAgreement model
+        agreement = ArticulationAgreement.parse_obj(agreement_data)
         return agreement
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
