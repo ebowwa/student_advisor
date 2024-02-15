@@ -1,11 +1,11 @@
+
+from aiohttp import ClientResponseError
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import Optional
-import uvicorn
-from api._assist.scrapers import AsyncScraper, AssistOrgAPI
-from api._assist.models import AgreementQuery, ArticulationAgreement 
-from api._assist.institution_fetch import InstitutionFetcher  
+
+from api._assist.institution_fetch import InstitutionFetcher
+from api._assist.models import AgreementQuery, ArticulationAgreement
+from api._assist.scrapers import AssistOrgAPI, AsyncScraper
 
 app = FastAPI()
 
@@ -33,6 +33,8 @@ async def get_agreements_categories(receiving_institution_id: int, sending_insti
         api = AssistOrgAPI(school_id=receiving_institution_id, major="", major_code="")
         categories = await api.fetch_agreements_categories(receiving_institution_id, sending_institution_id, academic_year_id)
         return categories
+    except ClientResponseError as e:
+        raise HTTPException(status_code=e.status, detail=f"Failed to retrieve agreement categories: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -52,7 +54,7 @@ async def get_articulation_agreements(key: str) -> ArticulationAgreement:
         agreement_data = await scraper.scrape_endpoint(f"https://assist.org/api/articulation/Agreements?Key={key}")
 
         # Assuming agreement_data is a dict that matches the ArticulationAgreement model
-        agreement = ArticulationAgreement.parse_obj(agreement_data)
+        agreement = ArticulationAgreement.validate(agreement_data)
         return agreement
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
