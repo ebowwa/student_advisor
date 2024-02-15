@@ -6,7 +6,8 @@ import logging
 
 from api._assist.institution_fetch import InstitutionFetcher
 from api._assist.models import AgreementQuery, ArticulationAgreement
-from api._assist.scrapers import AssistOrgAPI, AsyncScraper
+from api._assist.scrapers import AssistOrgAPI
+from api._assist.async_scraper import AsyncScraper
 
 logger = logging.getLogger(__name__)
 
