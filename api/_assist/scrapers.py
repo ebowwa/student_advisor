@@ -1,6 +1,5 @@
 import asyncio
-from httpx import AsyncClient
-from .async_scraper import AsyncScraper
+from api._assist .async_scraper import AsyncScraper
 from api._assist.foundation import (
     fetch_institution_agreements,
     fetch_agreements_categories,
@@ -11,23 +10,13 @@ from api._assist.foundation import (
     get_pdfs
 )
 
-class InstitutionFetcher(AsyncScraper):
-    """
-    Fetches institution-related data using the AsyncScraper.
-    """
-    async def fetch_institutions(self):
-        """
-        Fetches a list of institutions from the assist.org API.
-        """
-        return await self.scrape_endpoint("https://assist.org/api/institutions")
-
 class AssistOrgAPI:
     def __init__(self, school_id, major, major_code, delay=1):
         self.school_id = school_id
         self.major = major
         self.major_code = major_code
         self.delay = delay
-        self.scraper = AsyncScraper()  # Ensure AsyncScraper is defined or imported appropriately
+        self.scraper = AsyncScraper()
 
     async def fetch_institution_agreements(self, institution_id):
         return await fetch_institution_agreements(self.scraper, institution_id)

@@ -18,3 +18,7 @@ class AgreementDetail(BaseModel):
   receiving_institution: str
   sending_institution: str
   agreement_date: Optional[str] = None
+
+class Institution(BaseModel):
+  ID: int
+  Name: str

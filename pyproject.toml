@@ -9,6 +9,7 @@ python = ">=3.10.0,<3.11"
 uvicorn = "^0.27.1"
 fastapi = "^0.109.2"
 pydantic = "^2.6.1"
+requests = "^2.31.0"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md

@@ -1,20 +1,20 @@
 from fastapi import FastAPI, HTTPException
-from typing import Optional
-from pydantic import BaseModel
-import uvicorn
-from api._assist.scrapers import AsyncScraper, InstitutionFetcher, AssistOrgAPI
-from api._assist.models import AgreementQuery, ArticulationAgreement 
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional
+import uvicorn
+from api._assist.scrapers import AsyncScraper, AssistOrgAPI
+from api._assist.models import AgreementQuery, ArticulationAgreement 
+from api._assist.institution_fetch import InstitutionFetcher  
 
 app = FastAPI()
-
 
 @app.get("/api/institutions", response_model=list)
 async def get_institutions():
     try:
         fetcher = InstitutionFetcher()
         institutions = await fetcher.fetch_institutions()
-        return institutions
+        return institutions if institutions else []
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -79,7 +79,4 @@ async def custom_openapi():
 
 # To run the server, use the following command in your terminal:
 # uvicorn app:app --reload # app.py
-# uvicorn index:app --reload # index.py
-
-
-# uvicorn api:index --reload
+# uvicorn api.index:app --reload # api/index.py
